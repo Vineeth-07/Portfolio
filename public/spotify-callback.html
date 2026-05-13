@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify Callback</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        font-family: Inter, system-ui, sans-serif;
+        background:
+          radial-gradient(circle at top, rgba(29, 185, 84, 0.16), transparent 32%),
+          linear-gradient(180deg, #06111f, #020817 72%);
+        color: #e5eef8;
+      }
+
+      .panel {
+        width: min(100%, 760px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(7, 14, 27, 0.86);
+        padding: 28px;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+      }
+
+      .kicker {
+        margin: 0 0 10px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: #1ed760;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(32px, 5vw, 52px);
+        line-height: 0.98;
+      }
+
+      p {
+        margin: 16px 0 0;
+        font-size: 17px;
+        line-height: 1.7;
+        color: #c7d5e4;
+      }
+
+      .code {
+        margin-top: 18px;
+        overflow-wrap: anywhere;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 16px;
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 14px;
+        color: #f8fafc;
+      }
+
+      .hint {
+        margin-top: 12px;
+        font-size: 14px;
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="panel">
+      <p class="kicker">Spotify Auth Helper</p>
+      <h1 id="title">Checking callback...</h1>
+      <p id="message"></p>
+      <div id="code" class="code" hidden></div>
+      <p id="hint" class="hint"></p>
+    </main>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+      const error = params.get("error");
+      const title = document.getElementById("title");
+      const message = document.getElementById("message");
+      const codeBox = document.getElementById("code");
+      const hint = document.getElementById("hint");
+
+      if (error) {
+        title.textContent = "Spotify authorization failed";
+        message.textContent = `Spotify returned: ${error}`;
+        hint.textContent = "Go back to the terminal and run the auth URL command again if needed.";
+      } else if (code) {
+        title.textContent = "Spotify code received";
+        message.textContent =
+          "Use the code below with the exchange command to generate your refresh token.";
+        codeBox.hidden = false;
+        codeBox.textContent = code;
+        hint.textContent =
+          "Run: npm run spotify:exchange -- --code YOUR_CODE";
+      } else {
+        title.textContent = "No Spotify code found";
+        message.textContent =
+          "This page should be used only as the Spotify redirect target after authorization.";
+        hint.textContent =
+          "Start from the terminal with: npm run spotify:auth-url";
+      }
+    </script>
+  </body>
+</html>
